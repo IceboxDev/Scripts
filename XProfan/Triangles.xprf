@@ -1,0 +1,236 @@
+//Declaration
+declare Triangle_Type$, Output$, Exit$
+declare a!, b!, c!, x!
+declare alpha!, beta!, gamma!
+declare toRadians!, toDegrees!
+
+//Constants
+toRadians! = @pi() / 180
+toDegrees! = 180 / @pi()
+
+//Functions
+Def @arcsin(1) @arctan(@!(1)/(1+@sqrt(1-sqr(@!(1)))))*2*toDegrees!
+Def @arccos(1) ((@pi()/2) - @arctan(@!(1)/(1+@sqrt(1-sqr(@!(1)))))*2)*toDegrees!
+
+//Rounding 
+decimals 2
+
+//Main Loop
+
+repeat
+    //Triangle Type Input
+    print "Geben Sie die Art des Kongruenzsatzes ein: (SSS/SWS/WSW/SsW)"
+    input Triangle_Type$
+    Triangle_Type$ = @Lower$(Triangle_Type$)
+    while (Triangle_Type$ <> "sws") and (Triangle_Type$ <> "sss") and (Triangle_Type$ <> "wsw") and (Triangle_Type$ <> "ssw")
+        print "Fehlerhafte Eingabe"
+        print "Geben Sie die Art des Kongruenzsatzes ein: (SSS/SWS/WSW/SsW)"
+        input Triangle_Type$
+        Triangle_Type$ = @Lower$(Triangle_Type$)
+    endwhile
+
+    if Triangle_Type$ = "sws"
+        print "Geben sie die Seitenlänge a ein:"
+        input a!
+        print "Geben sie die Seitenlänge b ein:"
+        input b!
+        print "Geben sie Winkel Gamma ein:"
+        input gamma!
+        if (a! < 0) or (b! < 0) or (gamma! >= 180) or (gamma! <= 0)
+            print "Alle Seiten und Winkel dürfen nicht negativ oder null sein"
+            print "die Summe zweier Seiten darf nicht größer als die Länge der dritten Seite"
+            print "Die Innenwinkelsumme von 180 grad muss eingehalten werden."
+        else
+            c! =  @sqrt(a!^2 + b!^2 - 2*a!*b!*(@cos(gamma!*toRadians!)))
+            if (a! + b! > c!) and (a! + c! > b!) and (b! + c! > a!)
+                x! = round(a!^2 + c!^2 , 15)
+                if x! = (b!^2)
+                    beta! = 90
+                else
+                    x! = (x!-b!^2)/(2*a!*c!)
+                    beta! = @arccos(x!)
+                endif
+                alpha! = 180 - beta! - gamma!
+                if (alpha! = 90) or (beta! = 90) or (gamma! = 90)
+                    print "\nDreieck ist Rechtwinkling!"
+                    Output$ = a!
+                    print "Seite a       - " + Output$
+                    Output$ = b!
+                    print "Seite b       - " + Output$
+                    Output$ = c!
+                    print "Seite c       - " + Output$
+                    Output$ = alpha!
+                    print "Winkel alpha  - " + Output$
+                    Output$ = beta!
+                    print "Winkel beta   - " + Output$
+                    Output$ = gamma!
+                    print "Winkel gamma  - " + Output$
+                    Output$ = a! + b! + c!
+                    print "Umfang        - " + Output$
+                    Output$ = (1/2)*a!*b!*@sin(gamma!*toRadians!)
+                    print "Fläche        - " + Output$
+                else
+                    print "Dreieck ist nicht Rechwinkling!"
+                endif
+            else
+                print "Fehlerhafte Eingabe"
+            endif
+        endif
+    endif
+
+    if Triangle_Type$ = "sss"
+        print "Geben sie die Seitenlänge a ein:"
+        input a!
+        print "Geben sie die Seitenlänge b ein:"
+        input b!
+        print "Geben sie die Seitenlänge c ein:"
+        input c!
+        if (a! <= 0) or (b! <= 0) or (c! <= 0)
+            print "Alle Seiten und Winkel dürfen nicht negativ oder null sein"
+            print "die Summe zweier Seiten darf nicht größer als die Länge der dritten Seite"
+            print "Die Innenwinkelsumme von 180 grad muss eingehalten werden."
+        else
+            if (a! + b! > c!) and (a! + c! > b!) and (b! + c! > a!)
+                x! = round(b!^2 + c!^2 , 5)
+                if x! = (a!^2)
+                    alpha! = 90
+                else
+                    x! = (x!-a!^2)/(2*b!*c!)
+                    alpha! = round(@arccos(x!),5)
+                endif
+                x! = round(a!^2 + c!^2 , 5)
+                if x! = (b!^2)
+                    beta! = 90
+                else
+                    x! = (x!-b!^2)/(2*a!*c!)
+                    beta! = round(@arccos(x!),5)
+                endif
+                gamma! = round(180 - alpha! - beta!,5)
+                if (alpha! = 90) or (beta! = 90) or (gamma! = 90)
+                    print "\nDreieck ist Rechtwinkling!"
+                    Output$ = a!
+                    print "Seite a       - " + Output$
+                    Output$ = b!
+                    print "Seite b       - " + Output$
+                    Output$ = c!
+                    print "Seite c       - " + Output$
+                    Output$ = alpha!
+                    print "Winkel alpha  - " + Output$
+                    Output$ = beta!
+                    print "Winkel beta   - " + Output$
+                    Output$ = gamma!
+                    print "Winkel gamma  - " + Output$
+                    Output$ = a! + b! + c!
+                    print "Umfang        - " + Output$
+                    Output$ = (1/2)*a!*b!*@sin(gamma!*toRadians!)
+                    print "Fläche        - " + Output$
+                else
+                    print "Dreieck ist nicht Rechwinkling!"
+                endif
+            else
+                print "Alle Seiten und Winkel dürfen nicht negativ oder null sein"
+                print "die Summe zweier Seiten darf nicht größer als die Länge der dritten Seite"
+                print "Die Innenwinkelsumme von 180 grad muss eingehalten werden."
+            endif
+        endif
+    endif
+    if Triangle_Type$ = "wsw"
+        print "Geben sie die Seitenlänge c ein:"
+        input c!
+        print "Geben sie Winkel Alpha ein:"
+        input alpha!
+        print "Geben sie Winkel Beta ein:"
+        input beta!
+        gamma! = round(180 - alpha! - beta!,5)
+        if (c! <= 0) or (alpha! >= 180) or (beta! >= 180) or (alpha! <= 0) or (beta! <= 0) or (beta! + alpha! >= 180)
+            print "Alle Seiten und Winkel dürfen nicht negativ oder null sein"
+            print "die Summe zweier Seiten darf nicht größer als die Länge der dritten Seite"
+            print "Die Innenwinkelsumme von 180 grad muss eingehalten werden."
+        else
+            x! = c! / @sin(gamma!)
+            a! = x! - @sin(alpha!)
+            b! = x! - @sin(beta!)
+            if (alpha! = 90) or (beta! = 90) or (gamma! = 90)
+                print "\nDreieck ist Rechtwinkling!"
+                Output$ = a!
+                print "Seite a       - " + Output$
+                Output$ = b!
+                print "Seite b       - " + Output$
+                Output$ = c!
+                print "Seite c       - " + Output$
+                Output$ = alpha!
+                print "Winkel alpha  - " + Output$
+                Output$ = beta!
+                print "Winkel beta   - " + Output$
+                Output$ = gamma!
+                print "Winkel gamma  - " + Output$
+                Output$ = a! + b! + c!
+                print "Umfang        - " + Output$
+                Output$ = (1/2)*c!*a!*@sin(beta!*toRadians!)
+                print "Fläche        - " + Output$
+            else
+                print "Dreieck ist nicht Rechwinkling!"
+            endif 
+        endif
+    endif
+    if Triangle_Type$ = "ssw"
+        print "Geben sie die Seitenlänge a ein:"
+        input a!
+        print "Geben sie die Seitenlänge b ein:"
+        input b!
+        print "Geben sie Winkel Alpha ein:"
+        input alpha!
+        if (a! <= 0) or (b! <= 0) or (alpha! <= 0) or (alpha! >= 180)
+            print "Alle Seiten und Winkel dürfen nicht negativ oder null sein"
+            print "die Summe zweier Seiten darf nicht größer als die Länge der dritten Seite"
+            print "Die Innenwinkelsumme von 180 grad muss eingehalten werden."
+        else
+            x! = ((@sin(alpha!*toRadians!)/a!)*b!)
+            if x! >= 1
+                print "Fehlerhafte Eingabe"
+            else
+                beta! = round(@arcsin((@sin(alpha!*toRadians!)/a!)*b!),5)
+                gamma! = round(180 - beta! - alpha!,5)
+                if (beta! <= 0) or (gamma! <= 0) or (beta! >= 180) or (gamma! >= 180)
+                    print "Fehlerhafte Eingabe"
+                else
+                    c! =  @sqrt(a!^2 + b!^2 - 2*a!*b!*(@cos(gamma!*toRadians!)))
+                    if (alpha! = 90) or (beta! = 90) or (gamma! = 90)
+                        print "\nDreieck ist Rechtwinkling!"
+                        Output$ = a!
+                        print "Seite a       - " + Output$
+                        Output$ = b!
+                        print "Seite b       - " + Output$
+                        Output$ = c!
+                        print "Seite c       - " + Output$
+                        Output$ = alpha!
+                        print "Winkel alpha  - " + Output$
+                        Output$ = beta!
+                        print "Winkel beta   - " + Output$
+                        Output$ = gamma!
+                        print "Winkel gamma  - " + Output$
+                        Output$ = a! + b! + c!
+                        print "Umfang        - " + Output$
+                        Output$ = (1/2)*a!*b!*@sin(gamma!*toRadians!)
+                        print "Fläche        - " + Output$
+                    else
+                        print "Dreieck ist nicht Rechwinkling!"
+                    endif
+                endif
+            endif
+        endif
+    endif
+    print "\nNoch mal? (J/N)"
+    input Exit$
+    Exit$ = @lower$(Exit$)
+    while (Exit$ <> "ja") and (Exit$ <> "nein") and (Exit$ <> "j") and (Exit$ <> "n")
+        print "Fehlerhafte Eingabe"
+        print "Noch mal? (J/N)"
+        input Exit$
+        Exit$ = @lower$(Exit$)
+    endwhile
+until (Exit$ = "n") or (Exit$ = "nein")
+waitkey
+end
+
+//Mantas Kandratavicius 11/3 
