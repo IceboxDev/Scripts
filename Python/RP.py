@@ -1,9 +1,9 @@
 from collections    import defaultdict
 from itertools      import product
 
-RP      = 9113-540-292
+RP      = 9113-4092
 VALUES  = [225, 260, 375, 487, 675, 975, 1350]
-POTENT  = [682, 478, 540, 780, 292, 810]
+POTENT  = [750, 1795, 4092, 5173]
 RESULT  = defaultdict(list)
 POOLS   = []
 DEPTH   = 5
@@ -46,4 +46,4 @@ print("Other purchases:")
 print("|".join(map(lambda x: str(x)+(5-len(str(x)))*" ", [""]+POTENT)))
 print("+".join(["-"*5]*7))
 for other in POTENT:
-    print("|".join(map(lambda x: str(x)+(5-len(str(x)))*" ", [other]+[len(RESULT[RP-other-POTENT[i]]) if other != POTENT[i] else "X" for i in range(len(POTENT)) ])))
+    print("|".join(map(lambda x: str(x)+(5-len(str(x)))*" ", [other]+[len(RESULT[RP-other-POTENT[i]]) if other != POTENT[i] else len(RESULT[RP-other]) for i in range(len(POTENT)) ])))
