@@ -1,45 +1,40 @@
-from collections    import defaultdict
-from itertools      import product
+from collections import defaultdict
+import itertools
+RP      : int = 2097
 
-RP      = 5021
-VALUES  = [375, 487, 675, 975, 1350]
-POTENT  = [292, 675, 875, 1162, 1837, 3750]
-RESULT  = defaultdict(list)
-POOLS   = []
-DEPTH   = 5
+SKINS   : dict = {295  : False,
+                  260  : True,    # 520  Skins 50%
+                  375  : True,    # 750  Skins 50%
+                  487  : True,    # 975  Skins 50%
+                  675  : True,    # 1350 Skins 50%
+                  975  : True,    # 1350 Skins 35%
+                  1350 : True,    # 1820 Skins 35%
+                  }
 
-GENE = [("for "                                     +
-        chr(97+i)                                   +
-        " in range((RP"                             +
-        (" - {} * VALUES[-{}]") * i                 +
-        ") // VALUES[-"                             +
-        str(i+1)                                    +
-        "] + 1):\n"                                 +
-        " "*((i+1)*4)).format(*[item for sublist in zip(map(chr, range(97, 97+i)), range(1,i+1)) for item in sublist]) for i in range(DEPTH)] + \
-        [("POOLS.append(([range(7)] + [range((RP"   +
-        (" - {} * VALUES[-{}]") * DEPTH             +
-        ") // i + 1) for i in VALUES[1:-DEPTH]],("  +
-        ",".join(map(chr, range(97,97+DEPTH)))      +
-        ")))").format(*[item for sublist in zip(map(chr, range(97, 97+DEPTH)), range(1,DEPTH+1)) for item in sublist])]
+PRICES  : list = sorted([price for price in SKINS if SKINS[price]], reverse=True)
+RESULT  : defaultdict = defaultdict(list)
+POTENT  = [292, 390, 875]
 
-CODE = "".join(GENE)
-print(CODE)
-exec(CODE)
 
-for pool in POOLS:
-    print(pool)
-    for buying_choice in product(*pool[0]):
-        buying_choice += pool[1][::-1]
-        print(buying_choice)
-        RESULT[sum(amount * price for amount, price in zip(VALUES, buying_choice))].append(buying_choice)
+def options(pool: list = [], index: int = 0, price: int = 0) -> None:
 
-maximum = [max(RESULT[RP], key = lambda x: x[i])[i] for i in range(len(VALUES))]
+    if index + 1 != len(PRICES):
+        for amount in range((RP - price) // PRICES[index] + 1):
+            options(pool + [amount], index + 1, price + PRICES[index]*amount)
+
+    else:
+        for amount in range((RP - price) // PRICES[index] + 1):
+            RESULT[price + PRICES[index]*amount].append(tuple((pool + [amount])[::-1]))
+
+
+options()
+maximum = [max(RESULT[RP], key = lambda x: x[i])[i] for i in range(len(PRICES))]
 print("Current amount of RP: %s" %RP)
 print("%s Available purchase combinations" %len(RESULT[RP]))
 print("With limits %s" %maximum)
 
-for price in [i for i in range(len(VALUES)) if maximum[i]]:
-    print("If you're focusing on %sRP items you can consider buying one of the following:" %VALUES[price])
+for price in [i for i in range(len(PRICES)) if maximum[i]]:
+    print("If you're focusing on %sRP items you can consider buying one of the following:" %PRICES[::-1][price])
     for package in [i for i in RESULT[RP] if i[price] == maximum[price]]:
         print(package)
 
@@ -51,4 +46,15 @@ print("+".join(["-"*5]*7))
 for other in POTENT:
     print("|".join(map(lambda x: str(x)+(5-len(str(x)))*" ", [other]+[len(RESULT[RP-other-POTENT[i]]) if other != POTENT[i] else len(RESULT[RP-other]) for i in range(len(POTENT))])))
 
-print(RESULT[RP])
+possibl = []
+for i in [a for b in [itertools.combinations(POTENT, r=q) for q in range(1, len(POTENT))] for a in b]:
+    if RESULT[RP-sum(i)]:
+        for a in RESULT[RP-sum(i)]:
+            possibl.append((i, a))
+
+possibl.sort(key = lambda x: x[1][1])
+print(possibl)
+
+for x in possibl:
+    if x[1][0]+ x[1][1] == 1:
+        print(x)
